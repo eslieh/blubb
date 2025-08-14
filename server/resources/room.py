@@ -59,7 +59,12 @@ def invalidate_cache(*patterns):
                     room_id = kwargs.get('room_id') or (args[0] if args else None)
                     
                     for pattern in patterns:
-                        cache_keys = pattern.format(user_id=user_id, room_id=room_id)
+                        # Handle both string patterns and callable patterns
+                        if callable(pattern):
+                            cache_keys = pattern(user_id=user_id, room_id=room_id)
+                        else:
+                            cache_keys = pattern.format(user_id=user_id, room_id=room_id)
+                        
                         if isinstance(cache_keys, list):
                             for key in cache_keys:
                                 current_app.cache.delete(key)
@@ -73,6 +78,22 @@ def invalidate_cache(*patterns):
 
 class CacheManager:
     """Centralized cache management for room-related data."""
+    
+    @staticmethod
+    def get_room_participant_count_key(room_id):
+        return f"room:{room_id}:count"
+    
+    @staticmethod
+    def cache_room_participant_count(room_id, count, timeout=60):
+        """Cache room participant count."""
+        key = CacheManager.get_room_participant_count_key(room_id)
+        current_app.cache.set(key, count, timeout=timeout)
+    
+    @staticmethod
+    def get_room_participant_count(room_id):
+        """Get cached room participant count."""
+        key = CacheManager.get_room_participant_count_key(room_id)
+        return current_app.cache.get(key)
     
     @staticmethod
     def get_user_rooms_key(user_id):
@@ -97,7 +118,8 @@ class CacheManager:
             CacheManager.get_user_rooms_key(user_id),
             CacheManager.get_room_participants_key(room_id),
             CacheManager.get_room_details_key(room_id),
-            CacheManager.get_user_room_membership_key(user_id, room_id)
+            CacheManager.get_user_room_membership_key(user_id, room_id),
+            CacheManager.get_room_participant_count_key(room_id)
         ]
         
         for key in keys_to_delete:
@@ -159,9 +181,7 @@ class RoomListResource(Resource):
         return {"rooms": room_list}, 200
 
     @jwt_required()
-    @invalidate_cache(
-        lambda user_id, **kwargs: CacheManager.get_user_rooms_key(user_id)
-    )
+    @invalidate_cache("user:{user_id}:rooms")
     def post(self):
         """Create a new room with cache invalidation."""
         current_user_id = get_jwt_identity()
@@ -261,14 +281,25 @@ class RoomParticipantsResource(Resource):
 
         # Cache with shorter timeout since participants can change more frequently
         current_app.cache.set(cache_key, json.dumps(participants), timeout=60)
+        
+        # Also cache the participant count while we have it
+        CacheManager.cache_room_participant_count(room_id, len(participants))
 
         return {"participants": participants}, 200
 
 
 class RoomJoinResource(Resource):
     @jwt_required()
+    @invalidate_cache(
+        lambda user_id, room_id, **kwargs: [
+            CacheManager.get_user_rooms_key(user_id),
+            CacheManager.get_room_participants_key(room_id),
+            CacheManager.get_room_details_key(room_id),
+            CacheManager.get_room_participant_count_key(room_id)
+        ]
+    )
     def post(self, room_id):
-        """Join a room with optimized caching."""
+        """Join a room with optimized caching and participant limit."""
         current_user_id = get_jwt_identity()
         
         # Check room existence (use cache if available)
@@ -294,6 +325,17 @@ class RoomJoinResource(Resource):
         elif is_member:
             return {"message": "Already joined"}, 200
 
+        # Check room capacity limit (max 10 participants) - try cache first
+        cached_count = CacheManager.get_room_participant_count(room_id)
+        if cached_count is not None:
+            current_participant_count = cached_count
+        else:
+            current_participant_count = RoomParticipant.query.filter_by(room_id=room_id).count()
+            CacheManager.cache_room_participant_count(room_id, current_participant_count)
+        
+        if current_participant_count >= 10:
+            return {"error": "Room is full. Maximum 10 participants allowed."}, 403
+
         try:
             participant = RoomParticipant(
                 room_id=room_id,
@@ -304,7 +346,6 @@ class RoomJoinResource(Resource):
             db.session.commit()
 
             # Update caches
-            CacheManager.invalidate_room_related_cache(current_user_id, room_id)
             CacheManager.cache_room_membership(current_user_id, room_id, True)
 
             return {"message": "Joined room successfully"}, 201
@@ -316,6 +357,14 @@ class RoomJoinResource(Resource):
 
 class RoomLeaveResource(Resource):
     @jwt_required()
+    @invalidate_cache(
+        lambda user_id, room_id, **kwargs: [
+            CacheManager.get_user_rooms_key(user_id),
+            CacheManager.get_room_participants_key(room_id),
+            CacheManager.get_room_details_key(room_id),
+            CacheManager.get_room_participant_count_key(room_id)
+        ]
+    )
     def delete(self, room_id):
         """Leave a room with cache management."""
         current_user_id = get_jwt_identity()
@@ -340,7 +389,6 @@ class RoomLeaveResource(Resource):
             db.session.commit()
 
             # Update caches
-            CacheManager.invalidate_room_related_cache(current_user_id, room_id)
             CacheManager.cache_room_membership(current_user_id, room_id, False)
 
             return {"message": "Left room successfully"}, 200
@@ -390,3 +438,90 @@ class CacheWarmupResource(Resource):
         current_app.cache.set(user_rooms_key, json.dumps(room_list), timeout=180)
         
         return {"message": "Cache warmed up successfully"}, 200
+
+
+class RoomDetailResource(Resource):
+    @jwt_required()
+    def get(self, room_id):
+        """Get details of a single room with caching."""
+        current_user_id = get_jwt_identity()
+        
+        # Check if user is a member (with caching)
+        is_member = CacheManager.get_room_membership(current_user_id, room_id)
+        if is_member is None:
+            # Check database and cache result
+            participant = RoomParticipant.query.filter_by(
+                room_id=room_id, 
+                user_id=current_user_id
+            ).first()
+            is_member = participant is not None
+            CacheManager.cache_room_membership(current_user_id, room_id, is_member)
+        
+        if not is_member:
+            return {"error": "Access denied"}, 403
+
+        # Try cache first
+        cache_key = CacheManager.get_room_details_key(room_id)
+        cached_room = current_app.cache.get(cache_key)
+        
+        if cached_room:
+            room_data = json.loads(cached_room)
+            return {"room": room_data}, 200
+
+        # Query database with optimized loading
+        room = (
+            db.session.query(Room)
+            .options(
+                db.joinedload(Room.participants).joinedload(RoomParticipant.user),
+                db.joinedload(Room.creator)  # Assuming you have a creator relationship
+            )
+            .get(room_id)
+        )
+        
+        if not room:
+            return {"error": "Room not found"}, 404
+
+        # Get creator info
+        creator = None
+        if hasattr(room, 'creator') and room.creator:
+            creator = {
+                "id": room.creator.id,
+                "name": room.creator.name,
+                "profile": room.creator.profile,
+            }
+
+        room_data = {
+            "id": room.id,
+            "name": room.name,
+            "description": room.description,
+            "created_by": room.created_by,
+            "created_at": room.created_at.isoformat(),
+            "participants_count": len(room.participants),
+            "max_participants": 10,
+            "is_full": len(room.participants) >= 10,
+            "creator": creator,
+            "participants": [
+                {
+                    "id": p.user.id,
+                    "name": p.user.name,
+                    "profile": p.user.profile,
+                    "joined_at": p.joined_at.isoformat() if p.joined_at else None,
+                    "is_muted": getattr(p, 'is_muted', False)
+                }
+                for p in room.participants
+            ]
+        }
+
+        # Cache the result
+        current_app.cache.set(cache_key, json.dumps(room_data), timeout=120)
+        
+        # Also cache participant count and participants list while we have them
+        participants_cache_key = CacheManager.get_room_participants_key(room_id)
+        current_app.cache.set(
+            participants_cache_key, 
+            json.dumps(room_data["participants"]), 
+            timeout=60
+        )
+        CacheManager.cache_room_participant_count(room_id, room_data["participants_count"])
+
+        return {"room": room_data}, 200

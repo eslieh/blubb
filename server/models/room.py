@@ -10,8 +10,10 @@ class Room(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     # Relationships
+    creator = db.relationship('User', backref=db.backref('created_rooms', lazy=True), foreign_keys=[created_by])
     participants = db.relationship('RoomParticipant', backref='room', lazy=True)
     notifications = db.relationship('Notification', backref='room', lazy=True)
+
 
 class RoomParticipant(db.Model):
     __tablename__ = 'room_participants'

@@ -18,7 +18,7 @@ from flask_restful import Resource
 # Import your resources
 from resources.auth import GoogleAuth, Login, Register
 from resources.user_info import UserInfo
-from resources.room import RoomListResource, RoomResource, RoomJoinResource, RoomLeaveResource, RoomParticipantsResource
+from resources.room import RoomListResource, RoomJoinResource, RoomLeaveResource, RoomParticipantsResource, RoomDetailResource, CacheWarmupResource
 bcrypt = Bcrypt()
 
 
@@ -80,11 +80,16 @@ def create_app():
     api.add_resource(Register, '/auth/signup')
     
     api.add_resource(UserInfo, '/user/<int:user_id>', '/user')
-    api.add_resource(RoomListResource, "/rooms")
-    api.add_resource(RoomResource, "/rooms/<int:room_id>")
-    api.add_resource(RoomJoinResource, "/rooms/<int:room_id>/join")
-    api.add_resource(RoomLeaveResource, "/rooms/<int:room_id>/leave")
-    api.add_resource(RoomParticipantsResource, "/rooms/<int:room_id>/participants")
+
+    # Room management endpoints
+    api.add_resource(RoomListResource, '/rooms')
+    api.add_resource(RoomDetailResource, '/rooms/<int:room_id>')
+    api.add_resource(RoomParticipantsResource, '/rooms/<int:room_id>/participants')
+    api.add_resource(RoomJoinResource, '/rooms/<int:room_id>/join')
+    api.add_resource(RoomLeaveResource, '/rooms/<int:room_id>/leave')
+
+    # Utility endpoints
+    api.add_resource(CacheWarmupResource, '/cache/warmup')
 
     return app
 

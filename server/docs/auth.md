@@ -1,0 +1,114 @@
+# Flask Authentication API
+
+This module implements Google OAuth, Email/Password login, and registration using Flask, Flask-RESTful, Flask-Dance, Flask-Bcrypt, and Flask-JWT-Extended.
+
+## Imports
+```python
+from flask import redirect, jsonify, url_for, request
+from flask_restful import Resource
+from flask_dance.contrib.google import google
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from models import db, User
+from flask_bcrypt import Bcrypt
+import phonenumbers
+from urllib.parse import urlencode
+Bcrypt Initialization
+python
+Copy
+Edit
+bcrypt = Bcrypt()
+GoogleAuth Resource
+Handles Google OAuth login.
+
+python
+Copy
+Edit
+class GoogleAuth(Resource):
+    def get(self):
+        if not google.authorized:
+            return redirect(url_for("google.login"))
+
+        resp = google.get("/oauth2/v2/userinfo")
+        if not resp.ok:
+            return {"error": "Failed to fetch user info from Google"}, 400
+
+        user_info = resp.json()
+        email = user_info["email"]
+        name = user_info.get("name", "")
+        profile = user_info.get("picture", "")
+
+        # Check if user exists, else create
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            user = User(email=email, name=name, profile=profile)
+            db.session.add(user)
+            db.session.commit()
+
+        # Create JWT token
+        access_token = create_access_token(identity=str(user.id))
+        return {
+            "access_token": access_token,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "profile": user.profile,
+                "name": user.name
+            }
+        }, 200
+Login Resource
+Handles login via email/password.
+
+python
+Copy
+Edit
+class Login(Resource):
+    def post(self):
+        args = request.get_json()
+        email = args.get('email')
+        password = args.get('password')
+        
+        user = User.query.filter_by(email=email).first()
+        if user and bcrypt.check_password_hash(user.password, password):
+            access_token = create_access_token(identity=str(user.id))
+            return {
+                "access_token": access_token,
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
+                    "name": user.name,
+                    "profile": user.profile
+                }
+            }, 200
+        else:
+            return {"error": "Invalid credentials"}, 401
+Register Resource
+Handles new user registration.
+
+python
+Copy
+Edit
+class Register(Resource):
+    def post(self):
+        args = request.get_json()
+        email = args.get('email')
+        password = args.get('password')
+        name = args.get('name', '')
+        
+        if User.query.filter_by(email=email).first():
+            return {"error": "User already exists"}, 400
+        
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = User(email=email, password=hashed_password, name=name)
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return {"message": "User registered successfully, you can now login"}, 201
+Notes
+Google OAuth requires proper Flask-Dance configuration with Google API credentials.
+
+JWT is used for securing API endpoints.
+
+Passwords are hashed using Flask-Bcrypt before storing.
+
+Error handling should be expanded for production.
