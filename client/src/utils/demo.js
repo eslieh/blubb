@@ -491,4 +491,4 @@ export const demoCacheApi = {
 };
 
 // Export a flag to enable demo mode
-export const DEMO_MODE = process.env.NODE_ENV === 'production' && !process.env.DISABLE_DEMO; 
+export const DEMO_MODE = process.env.NODE_ENV === 'development' && !process.env.DISABLE_DEMO; 
