@@ -13,6 +13,8 @@ export function useMeshRoom(roomId, token) {
   const localStreamRef = useRef(null);
   const peersRef = useRef(new Map());
   const audioElementsRef = useRef(new Map());
+  const audioContextRef = useRef(null);
+  const gainNodeRef = useRef(null);
 
   useEffect(() => {
     let disposed = false;
@@ -20,20 +22,23 @@ export function useMeshRoom(roomId, token) {
     async function boot() {
       try {
         // 1) Get microphone access
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            channelCount: 1,
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-          },
+        const rawStream = await navigator.mediaDevices.getUserMedia({
+          audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
           video: false,
         });
-        
         if (disposed) return;
-        
-        localStreamRef.current = stream;
-        stream.getAudioTracks().forEach(track => (track.enabled = !muted));
+
+        // Create AudioContext pipeline
+        audioContextRef.current = new AudioContext();
+        const source = audioContextRef.current.createMediaStreamSource(rawStream);
+        const gainNode = audioContextRef.current.createGain();
+        gainNode.gain.value = muted ? 0 : 1;  // start muted
+        source.connect(gainNode);
+        const dest = audioContextRef.current.createMediaStreamDestination();
+        gainNode.connect(dest);
+
+        gainNodeRef.current = gainNode;
+        localStreamRef.current = dest.stream;
 
         // 2) Setup WebSocket connection
         const socketUrl = API_URL;
@@ -296,13 +301,9 @@ export function useMeshRoom(roomId, token) {
     const newMuted = !muted;
     setMuted(newMuted);
     
-    // Update local audio tracks
-    if (localStreamRef.current) {
-      localStreamRef.current.getAudioTracks().forEach(track => {
-        track.enabled = !newMuted;
-      });
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = newMuted ? 0 : 1;
     }
-
     // Emit status change to other participants
     if (socketRef.current) {
       socketRef.current.emit("user:status", {
