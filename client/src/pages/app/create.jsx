@@ -138,7 +138,7 @@ export default function Create() {
         <title>Create Room - Blubb.</title>
         <meta name="description" content="Create your own audio room and invite friends to join the conversation" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       
       <div className={styles.container}>

@@ -202,7 +202,7 @@ export default function Room() {
         <Head>
           <title>Loading Room - Blubb.</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon.png" />
         </Head>
 
         <div className={styles.container}>
@@ -232,7 +232,7 @@ export default function Room() {
         <Head>
           <title>Room Not Found - Blubb.</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon.png" />
         </Head>
 
         <div className={styles.container}>
@@ -298,7 +298,7 @@ export default function Room() {
           content={room.description || "Join this audio room conversation"}
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div className={styles.container}>

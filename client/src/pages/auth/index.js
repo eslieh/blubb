@@ -188,7 +188,7 @@ export default function Auth() {
           <title>Authenticating... - Blubb.</title>
           <meta name="description" content="Processing your authentication..." />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon.png" />
         </Head>
 
         <div className={styles.container}>
@@ -232,7 +232,7 @@ export default function Auth() {
         <title>{isLogin ? 'Welcome Back' : 'Join Blubb.'} - Start Your Journey</title>
         <meta name="description" content="Join thousands of people having meaningful conversations on Blubb.." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div className={styles.container}>

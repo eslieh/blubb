@@ -226,7 +226,7 @@ export default function TestRooms() {
         <title>Room Management Test - Blubb.</title>
         <meta name="description" content="Test room management API functionality" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div className={styles.container}>

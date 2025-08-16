@@ -101,7 +101,7 @@ export default function TestAuth() {
         <title>Authentication Test - Blubb.</title>
         <meta name="description" content="Test authentication functionality" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
 
       <div className={styles.container}>

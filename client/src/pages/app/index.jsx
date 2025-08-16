@@ -137,7 +137,7 @@ export default function Home() {
         <title>Blubb. - Where vibes meet and magic happens ✨</title>
         <meta name="description" content="Drop into rooms, share your energy, and connect with your people in real time. It's giving main character energy." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       
       <div className={styles.container}>

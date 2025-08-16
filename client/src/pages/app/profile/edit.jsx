@@ -215,7 +215,7 @@ export default function EditProfile() {
         <title>Edit Profile - Blubb.</title>
         <meta name="description" content="Update your profile information" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       
       <div className={styles.container}>
