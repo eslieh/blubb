@@ -154,3 +154,21 @@
   height: 100%;
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .navbar{
+        display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    background: transparent;
+    height: 10vh;
+    padding-bottom: 0px;
+    backdrop-filter: blur(4px);
+  }
+}
