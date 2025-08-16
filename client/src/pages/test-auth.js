@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
 import { redirectToGoogleAuth, isAuthenticated, getUserData, logout, signInWithEmail, signUpWithEmail } from '@/utils/auth';
@@ -6,14 +6,20 @@ import { demoRedirectToGoogleAuth, demoSignInWithEmail, demoSignUpWithEmail, DEM
 import styles from '@/styles/Auth.module.css';
 
 export default function TestAuth() {
-  const [authStatus, setAuthStatus] = useState(() => isAuthenticated());
-  const [userData, setUserData] = useState(() => getUserData());
+  const [authStatus, setAuthStatus] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [testEmail, setTestEmail] = useState('test@example.com');
   const [testPassword, setTestPassword] = useState('password123');
   const [testName, setTestName] = useState('Test User');
   const [testingSignIn, setTestingSignIn] = useState(false);
   const [testingSignUp, setTestingSignUp] = useState(false);
   const [testResult, setTestResult] = useState('');
+
+  // Check authentication status after component mounts to avoid SSR issues
+  useEffect(() => {
+    setAuthStatus(isAuthenticated());
+    setUserData(getUserData());
+  }, []);
 
   const refreshAuthStatus = () => {
     setAuthStatus(isAuthenticated());

@@ -292,7 +292,7 @@ export default function Room() {
   return (
     <>
       <Head>
-        <title>{room.name} - Blubb.</title>
+        <title>{`${room.name} - Blubb.`}</title>
         <meta
           name="description"
           content={room.description || "Join this audio room conversation"}

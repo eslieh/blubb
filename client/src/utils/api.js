@@ -1,4 +1,4 @@
-import { API_URL } from './config';
+import { API_URL, APP_URL } from './config';
 import { getAuthHeaders } from './auth';
 
 // Base API utility function
@@ -117,7 +117,7 @@ export const roomUtils = {
     isFull: room.is_full || false,
     creator: room.creator,
     participants: room.participants || [],
-    url: `${window.location.origin}/app/room/${room.id}`
+    url: `${APP_URL}/app/room/${room.id}`
   }),
 
   // Format participant data

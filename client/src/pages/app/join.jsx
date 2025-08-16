@@ -236,7 +236,7 @@ export default function Join() {
                       setRoomInput(e.target.value);
                       setError(''); // Clear error when user types
                     }}
-                    placeholder="https://blubb.app/room/abc123 or just abc123"
+                    placeholder="https://blubbb.vercel.app/room/abc123 or just abc123"
                     disabled={isJoining}
                     className={`${formStyles.modernInputWithIcon} ${error ? formStyles.error : ''}`}
                   />

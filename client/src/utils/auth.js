@@ -2,12 +2,14 @@ import { API_URL } from './config';
 
 // Cookie utilities
 export const setCookie = (name, value, days = 7) => {
+  if (typeof window === 'undefined') return; // SSR guard
   const expires = new Date();
   expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
   document.cookie = `${name}=${encodeURIComponent(JSON.stringify(value))};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 };
 
 export const getCookie = (name) => {
+  if (typeof window === 'undefined') return null; // SSR guard
   const nameEQ = name + "=";
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -25,11 +27,13 @@ export const getCookie = (name) => {
 };
 
 export const deleteCookie = (name) => {
+  if (typeof window === 'undefined') return; // SSR guard
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
 };
 
 // Authentication functions
 export const redirectToGoogleAuth = () => {
+  if (typeof window === 'undefined') return; // SSR guard
   const redirectUrl = `${API_URL}/login/google`;
   window.location.href = redirectUrl;
 };
@@ -165,7 +169,9 @@ export const isAuthenticated = () => {
 export const logout = () => {
   deleteCookie('auth_token');
   deleteCookie('user_data');
-  window.location.href = '/auth';
+  if (typeof window !== 'undefined') {
+    window.location.href = '/auth';
+  }
 };
 
 export const getAuthHeaders = () => {
