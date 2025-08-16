@@ -31,7 +31,7 @@ class GoogleAuth(Resource):
 
         # Create JWT token
         access_token = create_access_token(identity=str(user.id))
-        redirect_url = f"http://localhost:3000/auth?{urlencode({'token': access_token, 'email': user.email, 'id': user.id, 'name': user.name, 'profile': user.profile})}"
+        redirect_url = f"https://blubbb.vercel.app/auth?{urlencode({'token': access_token, 'email': user.email, 'id': user.id, 'name': user.name, 'profile': user.profile})}"
         return redirect(redirect_url)
         # return {"access_token": access_token, "user": {"id": user.id, "email": user.email, "profile":user.profile, "name": user.name}}, 200
 
