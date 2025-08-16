@@ -170,5 +170,6 @@
     height: 10vh;
     padding-bottom: 0px;
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 }
