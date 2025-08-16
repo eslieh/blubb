@@ -1,3 +1,4 @@
+import { API_URL } from "@/utils/config";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
@@ -35,7 +36,7 @@ export function useMeshRoom(roomId, token) {
         stream.getAudioTracks().forEach(track => (track.enabled = !muted));
 
         // 2) Setup WebSocket connection
-        const socketUrl = process.env.NEXT_PUBLIC_SIGNAL_URL || "http://localhost:5000";
+        const socketUrl = API_URL;
         const socket = io(socketUrl, {
           transports: ["websocket"],
           auth: { token, roomId: Number(roomId) },
