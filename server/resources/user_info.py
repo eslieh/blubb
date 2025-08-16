@@ -59,8 +59,8 @@ class UserInfo(Resource):
         user_id = get_jwt_identity()
         user = User.query.get(user_id)
 
-        if not user:
-            return {"error": "User not found"}, 404
+        if not user:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            return {"error": "User not found"}, 404                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
 
         args = request.get_json()
         updated = False
@@ -74,7 +74,7 @@ class UserInfo(Resource):
 
         if updated:
             db.session.commit()
-            self._invalidate_user_cache(user_id)  # clear old cache
+            self._invalidate_user_cache(user_id)  # clear old cache                                                                                                                                                                                                                                                                                                                                                                         
             self._get_user_from_cache(user_id)    # refresh cache
 
         return {"message": "User info updated successfully"}, 200

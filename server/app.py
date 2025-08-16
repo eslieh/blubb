@@ -10,6 +10,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 import redis
 import ssl
+from socketio_server import init_socketio, socketio
 
 from config import Config
 from models import db
@@ -96,6 +97,8 @@ def create_app():
 
 # For gunicorn / production import
 app = create_app()
+init_socketio(app)
 
 if __name__ == '__main__':
+    import eventlet; eventlet.monkey_patch()  # Patch sockets for eventlet
     app.run(debug=True)

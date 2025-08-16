@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Settings, Shield, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import styles from './ProfileDropdown.module.css';
+import { logout } from '@/utils/auth';
 
 export default function ProfileDropdown({ user }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,14 +21,18 @@ export default function ProfileDropdown({ user }) {
   }, []);
 
   const handleLogout = () => {
-    // TODO: Implement logout logic
-    console.log('Logging out...');
     setIsOpen(false);
+    logout();
   };
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  // Don't render if user is null or undefined
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className={styles.profileDropdown} ref={dropdownRef}>
@@ -37,7 +42,11 @@ export default function ProfileDropdown({ user }) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        <img src={user.image} className={styles.profileImage} alt={`${user.name}'s profile`} />
+        <img 
+          src={user.image || "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"} 
+          className={styles.profileImage} 
+          alt={`${user.name || 'User'}'s profile`} 
+        />
         <motion.div
           className={styles.chevron}
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -57,9 +66,13 @@ export default function ProfileDropdown({ user }) {
             transition={{ duration: 0.2 }}
           >
             <div className={styles.userInfo}>
-              <img src={user.image} className={styles.menuProfileImage} alt={`${user.name}'s profile`} />
+              <img 
+                src={user.image || "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"} 
+                className={styles.menuProfileImage} 
+                alt={`${user.name || 'User'}'s profile`} 
+              />
               <div className={styles.userDetails}>
-                <span className={styles.userName}>{user.name}</span>
+                <span className={styles.userName}>{user.name || 'Unknown User'}</span>
                 <span className={styles.userEmail}>{user.email || 'user@example.com'}</span>
               </div>
             </div>

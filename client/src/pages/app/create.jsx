@@ -1,12 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { Copy, Check, Users, MessageCircle, ExternalLink } from 'lucide-react';
 import Header from './components/Header';
 import styles from '../../styles/App.module.css';
 import formStyles from './components/ModernForm.module.css';
 import typography from './components/Typography.module.css';
+import { isAuthenticated, getUserData } from '@/utils/auth';
+import { roomsApi, roomUtils, apiErrors } from '@/utils/api';
+import { demoRoomsApi, DEMO_MODE } from '@/utils/demo';
 
 export default function Create() {
   const [roomName, setRoomName] = useState('');
@@ -14,12 +18,24 @@ export default function Create() {
   const [createdRoom, setCreatedRoom] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
-  const user = {
-    name: "Victor",
-    email: "victor@blubb.app",
-    image: "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"
-  };
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/auth');
+      return;
+    }
+    
+    const userData = getUserData();
+    if (userData) {
+      setUser({
+        name: userData.name,
+        image: userData.profile || "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"
+      });
+    }
+  }, [router]);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -40,33 +56,42 @@ export default function Create() {
     whileTap: { scale: 0.95 }
   };
 
-  // Generate a unique room ID
-  const generateRoomId = () => {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  };
-
   const handleCreateRoom = async (e) => {
     e.preventDefault();
-    if (!roomName.trim()) return;
+    
+    if (!roomName.trim()) {
+      setError('Room name is required');
+      return;
+    }
 
     setIsCreating(true);
+    setError('');
     
-    // Simulate room creation process
-    setTimeout(() => {
-      const roomId = generateRoomId();
-      const newRoom = {
-        id: roomId,
+    try {
+      let result;
+      const roomData = {
         name: roomName.trim(),
-        description: roomDescription.trim(),
-        creator: user.name,
-        createdAt: new Date().toISOString(),
-        url: `${window.location.origin}/app/room/${roomId}`,
-        participants: 1
+        description: roomDescription.trim()
       };
-      
-      setCreatedRoom(newRoom);
+
+      if (DEMO_MODE) {
+        result = await demoRoomsApi.createRoom(roomData);
+      } else {
+        result = await roomsApi.createRoom(roomData);
+      }
+
+      if (result.success) {
+        const formattedRoom = roomUtils.formatRoom(result.data.room);
+        setCreatedRoom(formattedRoom);
+      } else {
+        setError(apiErrors.parseError(result.error));
+      }
+    } catch (error) {
+      console.error('Room creation error:', error);
+      setError('Failed to create room. Please try again.');
+    } finally {
       setIsCreating(false);
-    }, 1500);
+    }
   };
 
   const copyRoomUrl = async () => {
@@ -86,7 +111,26 @@ export default function Create() {
     setRoomName('');
     setRoomDescription('');
     setCopiedUrl(false);
+    setError('');
   };
+
+  // Show loading state while checking authentication
+  if (!user) {
+    return (
+      <div className={styles.container}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          fontSize: '1.2rem',
+          color: 'rgba(255, 255, 255, 0.7)'
+        }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -99,6 +143,28 @@ export default function Create() {
       
       <div className={styles.container}>
         <Header user={user} />
+        
+        {/* Demo Mode Indicator */}
+        {DEMO_MODE && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              position: 'fixed',
+              top: '1rem',
+              right: '1rem',
+              background: 'rgba(34, 197, 94, 0.1)',
+              color: '#86efac',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              border: '1px solid rgba(34, 197, 94, 0.2)',
+              zIndex: 1000
+            }}
+          >
+            🧪 Demo Mode
+          </motion.div>
+        )}
         
         <section className={styles.hero}>
           <motion.div 
@@ -135,6 +201,25 @@ export default function Create() {
                     variants={fadeInUp}
                     className={formStyles.modernCard}
                   >
+                    {/* Error Message */}
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.1)',
+                          color: '#fca5a5',
+                          padding: '0.875rem 1rem',
+                          borderRadius: '12px',
+                          fontSize: '0.875rem',
+                          marginBottom: '1rem',
+                          border: '1px solid rgba(239, 68, 68, 0.2)'
+                        }}
+                      >
+                        {error}
+                      </motion.div>
+                    )}
+
                     <div className={formStyles.formGroup}>
                       <label className={formStyles.formLabel}>
                         Room Name *
@@ -142,9 +227,13 @@ export default function Create() {
                       <input
                         type="text"
                         value={roomName}
-                        onChange={(e) => setRoomName(e.target.value)}
+                        onChange={(e) => {
+                          setRoomName(e.target.value);
+                          if (error) setError('');
+                        }}
                         placeholder="What's your room about?"
                         required
+                        disabled={isCreating}
                         className={formStyles.modernInput}
                       />
                     </div>
@@ -158,6 +247,7 @@ export default function Create() {
                         onChange={(e) => setRoomDescription(e.target.value)}
                         placeholder="Tell people what to expect..."
                         rows={3}
+                        disabled={isCreating}
                         className={formStyles.modernTextarea}
                       />
                     </div>
@@ -200,7 +290,7 @@ export default function Create() {
                       <div className={formStyles.resultStats}>
                         <span className={formStyles.statItem}>
                           <Users size={16} />
-                          {createdRoom.participants} participant
+                          {createdRoom.participantsCount} participant{createdRoom.participantsCount !== 1 ? 's' : ''}
                         </span>
                         <span className={formStyles.statItem}>
                           <MessageCircle size={16} />

@@ -196,6 +196,11 @@
   color: #ff8f39;
 }
 
+.toggleButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Email Form */
 .emailForm {
   display: flex;
@@ -203,9 +208,35 @@
   gap: 1rem;
 }
 
+/* Messages */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.message.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.message.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+/* Input Groups */
 .inputGroup {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .passwordInput {
@@ -224,6 +255,16 @@
   width: 100%;
 }
 
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Input with icon styling */
+.inputGroup:has(.inputIcon) .input {
+  padding-left: 2.75rem;
+}
+
 .passwordInput .input {
   padding-right: 2.75rem;
 }
@@ -237,6 +278,17 @@
   border-color: #ff6b08;
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 0 3px rgba(255, 107, 8, 0.1);
+}
+
+/* Input Icons */
+.inputIcon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .eyeButton {
@@ -257,6 +309,11 @@
   color: #d1d5db;
 }
 
+.eyeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .submitButton {
   background: linear-gradient(135deg, #ff6b08 0%, #ff8f39 50%, #fbbf24 100%);
   color: white;
@@ -271,9 +328,14 @@
   margin-top: 0.5rem;
 }
 
-.submitButton:hover {
+.submitButton:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(255, 107, 8, 0.3);
+}
+
+.submitButton:disabled {
+  cursor: not-allowed;
+  transform: none;
 }
 
 .backToOptions {
@@ -292,8 +354,23 @@
   margin-top: 0.25rem;
 }
 
-.backToOptions:hover {
+.backToOptions:hover:not(:disabled) {
   color: #ff6b08;
+}
+
+.backToOptions:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Inline Toggle */
+.inlineToggle {
+  text-align: center;
+  margin-top: 1rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Footer */

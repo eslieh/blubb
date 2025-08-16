@@ -1,25 +1,38 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { ExternalLink, Users, Search, AlertCircle } from 'lucide-react';
 import Header from './components/Header';
 import styles from '../../styles/App.module.css';
 import formStyles from './components/ModernForm.module.css';
 import typography from './components/Typography.module.css';
+import { isAuthenticated, getUserData } from '@/utils/auth';
+import { roomsApi, roomUtils, apiErrors } from '@/utils/api';
+import { demoRoomsApi, DEMO_MODE } from '@/utils/demo';
 
 export default function Join() {
   const [roomInput, setRoomInput] = useState('');
   const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState('');
+  const [user, setUser] = useState(null);
   const router = useRouter();
 
-  const user = {
-    name: "Victor",
-    email: "victor@blubb.app",
-    image: "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"
-  };
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.push('/auth');
+      return;
+    }
+    
+    const userData = getUserData();
+    if (userData) {
+      setUser({
+        name: userData.name,
+        image: userData.profile || "https://i.pinimg.com/736x/87/5b/4f/875b4fb82c44a038466807b0dcf884cc.jpg"
+      });
+    }
+  }, [router]);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -60,11 +73,12 @@ export default function Join() {
 
   const validateRoomId = (roomId) => {
     // Basic validation - room ID should be alphanumeric and reasonable length
-    return roomId && roomId.length >= 5 && roomId.length <= 50 && /^[a-zA-Z0-9]+$/.test(roomId);
+    return roomId && roomId.length >= 1 && roomId.length <= 50 && /^[a-zA-Z0-9]+$/.test(roomId);
   };
 
   const handleJoinRoom = async (e) => {
     e.preventDefault();
+    
     if (!roomInput.trim()) {
       setError('Please enter a room URL or ID');
       return;
@@ -73,21 +87,82 @@ export default function Join() {
     setError('');
     setIsJoining(true);
 
-    const roomId = extractRoomId(roomInput);
-    
-    if (!roomId || !validateRoomId(roomId)) {
-      setError('Invalid room URL or ID. Please check and try again.');
-      setIsJoining(false);
-      return;
-    }
+    try {
+      const roomId = extractRoomId(roomInput);
+      
+      if (!roomId || !validateRoomId(roomId)) {
+        setError('Invalid room URL or ID. Please check and try again.');
+        setIsJoining(false);
+        return;
+      }
 
-    // Simulate checking if room exists
-    setTimeout(() => {
-      // In a real app, you'd check if the room exists
-      // For now, we'll assume all valid format room IDs exist
-      router.push(`/app/room/${roomId}`);
-    }, 1000);
+      // First, check if the room exists
+      let roomCheckResult;
+      if (DEMO_MODE) {
+        roomCheckResult = await demoRoomsApi.getRoomDetails(roomId);
+      } else {
+        roomCheckResult = await roomsApi.getRoomDetails(roomId);
+      }
+
+      if (!roomCheckResult.success) {
+        if (roomCheckResult.error.includes('not found') || roomCheckResult.error.includes('404')) {
+          setError('Room not found. Please check the room ID and try again.');
+        } else {
+          setError(apiErrors.parseError(roomCheckResult.error));
+        }
+        setIsJoining(false);
+        return;
+      }
+
+      const room = roomCheckResult.data.room;
+
+      // Check if room is joinable
+      if (!roomUtils.isRoomJoinable(room)) {
+        setError('This room is currently full. Please try again later.');
+        setIsJoining(false);
+        return;
+      }
+
+      // Try to join the room
+      let joinResult;
+      if (DEMO_MODE) {
+        joinResult = await demoRoomsApi.joinRoom(roomId);
+      } else {
+        joinResult = await roomsApi.joinRoom(roomId);
+      }
+
+      if (joinResult.success) {
+        // Successfully joined, redirect to the room
+        router.push(`/app/room/${roomId}`);
+      } else {
+        setError(apiErrors.parseError(joinResult.error));
+        setIsJoining(false);
+      }
+
+    } catch (error) {
+      console.error('Join room error:', error);
+      setError('Failed to join room. Please try again.');
+      setIsJoining(false);
+    }
   };
+
+  // Show loading state while checking authentication
+  if (!user) {
+    return (
+      <div className={styles.container}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          fontSize: '1.2rem',
+          color: 'rgba(255, 255, 255, 0.7)'
+        }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -100,6 +175,28 @@ export default function Join() {
       
       <div className={styles.container}>
         <Header user={user} />
+        
+        {/* Demo Mode Indicator */}
+        {DEMO_MODE && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              position: 'fixed',
+              top: '1rem',
+              right: '1rem',
+              background: 'rgba(34, 197, 94, 0.1)',
+              color: '#86efac',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              border: '1px solid rgba(34, 197, 94, 0.2)',
+              zIndex: 1000
+            }}
+          >
+            🧪 Demo Mode
+          </motion.div>
+        )}
         
         <section className={styles.hero}>
           <motion.div 
@@ -140,6 +237,7 @@ export default function Join() {
                       setError(''); // Clear error when user types
                     }}
                     placeholder="https://blubb.app/room/abc123 or just abc123"
+                    disabled={isJoining}
                     className={`${formStyles.modernInputWithIcon} ${error ? formStyles.error : ''}`}
                   />
                   <Search 
@@ -158,6 +256,25 @@ export default function Join() {
                   </motion.div>
                 )}
               </div>
+
+              {/* Demo hint */}
+              {DEMO_MODE && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    color: '#93c5fd',
+                    padding: '0.75rem',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    marginBottom: '1rem',
+                    border: '1px solid rgba(59, 130, 246, 0.2)'
+                  }}
+                >
+                  💡 Demo rooms available: Try ID "1" or "2"
+                </motion.div>
+              )}
 
               <motion.button
                 type="submit"
