@@ -250,20 +250,18 @@ export function useMeshRoom(roomId, token) {
   const toggleMute = () => {
     const newMuted = !muted;
     setMuted(newMuted);
+
     if (gainNodeRef.current) {
+      // Adjust gain instead of removing the track
       gainNodeRef.current.gain.value = newMuted ? 0 : 1;
     }
-    // Update remote peers with replaceTrack instead of renegotiation
-    peersRef.current.forEach((pc) => {
-      const sender = pc.getSenders().find((s) => s.track?.kind === "audio");
-      if (sender) {
-        sender.replaceTrack(newMuted ? null : localTrackRef.current);
-      }
-    });
+
+    // Still notify peers about mute status for UI
     if (socketRef.current) {
       socketRef.current.emit("user:status", { status: { is_muted: newMuted } });
     }
   };
+
 
   const refreshParticipants = () => {
     socketRef.current?.emit("participants:list");
