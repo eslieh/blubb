@@ -1,5 +1,8 @@
+import eventlet
+eventlet.monkey_patch()
 import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
 from flask import Flask
 from flask_restful import Api
 from flask_caching import Cache
@@ -20,10 +23,14 @@ from flask_restful import Resource
 from resources.auth import GoogleAuth, Login, Register
 from resources.user_info import UserInfo
 from resources.room import RoomListResource, RoomJoinResource, RoomLeaveResource, RoomParticipantsResource, RoomDetailResource, CacheWarmupResource
+import sqlalchemy.pool
 bcrypt = Bcrypt()
 
 
 def create_app():
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "poolclass": sqlalchemy.pool.NullPool
+    }
     app = Flask(__name__)
     app.config.from_object(Config)
 
@@ -100,5 +107,4 @@ app = create_app()
 init_socketio(app)
 
 if __name__ == '__main__':
-    import eventlet; eventlet.monkey_patch()  # Patch sockets for eventlet
     app.run(debug=True)
