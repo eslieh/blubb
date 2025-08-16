@@ -28,11 +28,12 @@ bcrypt = Bcrypt()
 
 
 def create_app():
+    app = Flask(__name__)
+    
+    app.config.from_object(Config)
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
         "poolclass": sqlalchemy.pool.NullPool
     }
-    app = Flask(__name__)
-    app.config.from_object(Config)
 
     # Extensions
     db.init_app(app)
