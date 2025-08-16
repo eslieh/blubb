@@ -1,0 +1,349 @@
+/* Room Component Styles */
+
+.hero {
+    z-index: 2;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0px 0rem;
+    display: flex
+;
+    position: relative;
+    margin-top: 17px;
+}
+.roomContainer {
+-webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    color: #fff;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 24px;
+    margin: 4rem auto;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, .3);
+}
+
+.roomHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.backButton {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.roomTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.roomDescription {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  margin-bottom: 2rem;
+}
+
+.hostSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hostAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1rem;
+  display: block;
+  border: 3px solid rgba(255, 107, 8, 0.3);
+}
+
+.hostName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.hostRole {
+  font-size: 0.85rem;
+  color: rgba(255, 107, 8, 0.8);
+  font-weight: 500;
+}
+
+.participantSection {
+  margin-bottom: 2rem;
+}
+
+.participantAvatars {
+  display: flex;
+  justify-content: center;
+  gap: -0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.participantAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  margin-left: -0.25rem;
+  transition: all 0.2s ease;
+}
+
+.participantAvatar:hover {
+  transform: scale(1.1);
+  z-index: 10;
+  position: relative;
+  border-color: rgba(255, 107, 8, 0.6);
+}
+
+.participantAvatar:first-child {
+  margin-left: 0;
+}
+
+.roomStats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  display: block;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 0.25rem;
+}
+
+.controlsbottm {
+    position: fixed;
+    width: 100%;
+    display: grid
+;
+    place-content: center;
+    bottom: 3%;
+    z-index: 5000;
+}
+.audioControls {
+     justify-content: center;
+    gap: 2rem;
+    display: flex
+;
+    backdrop-filter: blur(44px);
+    padding: 9px;
+    border-radius: 54px;
+    box-shadow: 0 0 12px #0000009e;
+}
+
+.micButton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 1.2rem;
+  position: relative;
+}
+
+.micButton.muted {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+.micButton.unmuted {
+  background: linear-gradient(135deg, #51cf66, #40c057);
+  color: white;
+  box-shadow: 0 8px 20px rgba(81, 207, 102, 0.4);
+}
+
+.micButton:hover {
+  transform: translateY(-2px);
+}
+
+.micButton:active {
+  transform: translateY(0);
+}
+
+.moreButton {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.moreButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.shareSection {
+  margin-bottom: 1rem;
+}
+
+.shareLabel {
+  display: block;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.shareContainer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shareInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.copyButton {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.copyButton.copied {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.copyButton.normal {
+  background: rgba(255, 107, 8, 0.2);
+  color: rgba(255, 107, 8, 1);
+}
+
+.copyButton:hover {
+  transform: translateY(-1px);
+}
+
+.roomStatus {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.statusText {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.tipCard {
+  background: rgba(147, 51, 234, 0.1);
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(147, 51, 234, 0.2);
+  line-height: 1.4;
+  color: rgba(147, 51, 234, 0.9);
+}
+
+/* Loading and Error States */
+.loadingContainer,
+.errorContainer {
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 400px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.loadingTitle,
+.errorTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loadingSubtext,
+.errorSubtext {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 2rem;
+} 

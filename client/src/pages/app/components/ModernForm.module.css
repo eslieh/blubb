@@ -1,0 +1,286 @@
+
+.modernCard {
+    max-width: 500px;
+    margin: 0 auto;
+}
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.formGroupLarge {
+  margin-bottom: 2.5rem;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.modernInput {
+  width: 100%;
+  padding: 1rem 0;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: white;
+  font-size: 1.1rem;
+  outline: none;
+  transition: border-bottom-color 0.3s ease;
+  font-weight: 400;
+  font-family: 'figtree';
+}
+
+.modernInput:focus {
+  border-bottom-color: rgba(255, 107, 8, 0.6);
+}
+
+.modernInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.modernTextarea {
+  width: 100%;
+  padding: 1rem 0;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  resize: none;
+  transition: border-bottom-color 0.3s ease;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.modernTextarea:focus {
+  border-bottom-color: rgba(255, 107, 8, 0.6);
+}
+
+.modernTextarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.inputWithIcon {
+  position: relative;
+}
+
+.modernInputWithIcon {
+  width: 100%;
+  padding: 1rem 0 1rem 2.5rem;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.modernInputWithIcon:focus {
+  border-bottom-color: rgba(255, 107, 8, 0.6);
+}
+
+.modernInputWithIcon.error {
+  border-bottom-color: rgba(239, 68, 68, 0.8);
+}
+
+.inputIcon {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.primaryButton {
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Result Card Styles */
+.resultCard {
+  max-width: 600px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2.5rem;
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resultHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.resultTitle {
+  color: rgba(255, 107, 8, 1);
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.resultDescription {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.resultStats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.shareSection {
+  margin-bottom: 2rem;
+}
+
+.shareLabel {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  text-align: center;
+}
+
+.shareContainer {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shareInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.copyButton {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.copyButton.copied {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.copyButton.normal {
+  background: rgba(255, 107, 8, 0.2);
+  color: rgba(255, 107, 8, 1);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.buttonFlex {
+  flex: 1;
+  min-width: 200px;
+}
+
+.buttonFlex button {
+  width: 100%;
+  padding: 1rem;
+}
+
+/* Info Card Styles */
+.infoCard {
+  margin-top: 2.5rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.infoCardContent {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.infoTitle {
+  color: rgba(255, 107, 8, 1);
+  margin-bottom: 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.infoList {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.infoList p {
+  margin-bottom: 0.75rem;
+}
+
+.infoList p:last-child {
+  margin-bottom: 0;
+}
+
+.callToAction {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.callToActionText {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.callToActionButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+} 

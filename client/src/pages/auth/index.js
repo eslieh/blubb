@@ -51,8 +51,8 @@ export default function Auth() {
   return (
     <>
       <Head>
-        <title>{isLogin ? 'Welcome Back' : 'Join Blubb'} - Start Your Journey</title>
-        <meta name="description" content="Join thousands of people having meaningful conversations on Blubb." />
+        <title>{isLogin ? 'Welcome Back' : 'Join Blubb.'} - Start Your Journey</title>
+        <meta name="description" content="Join thousands of people having meaningful conversations on Blubb.." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -72,7 +72,7 @@ export default function Auth() {
             </Link>
             
             <div className={styles.logoSection}>
-              <h1 className={styles.logo}>Blubb</h1>
+              <h1 className={styles.logo}>Blubb.</h1>
               <h2 className={styles.title}>
                 {isLogin ? "Welcome back" : "Join the conversation"}
               </h2>

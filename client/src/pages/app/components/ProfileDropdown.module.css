@@ -1,0 +1,164 @@
+.profileDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profileTrigger {
+    cursor: pointer;
+    border-radius: 50px;
+    align-items: center;
+    gap: .5rem;
+    padding: .25rem;
+    transition: all .2s;
+    display: flex
+;
+    margin-top: -14px;
+}
+
+.profileTrigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profileImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: border-color 0.2s ease;
+}
+
+.profileTrigger:hover .profileImage {
+  border-color: rgba(255, 107, 8, 0.5);
+}
+
+.chevron {
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.profileTrigger:hover .chevron {
+  color: rgba(255, 107, 8, 0.8);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: rgba(30, 30, 46, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+  min-width: 280px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.menuProfileImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 107, 8, 0.3);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.userName {
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.userEmail {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0;
+}
+
+.menuItems {
+  padding: 0.5rem 0;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.menuItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  transform: translateX(4px);
+}
+
+.menuItem svg {
+  transition: all 0.2s ease;
+}
+
+.menuItem:hover svg {
+  color: rgba(255, 107, 8, 0.8);
+}
+
+.logoutItem:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.logoutItem:hover svg {
+  color: #ef4444;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dropdownMenu {
+    min-width: 260px;
+    right: -1rem;
+  }
+  
+  .profileImage {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .menuProfileImage {
+    width: 35px;
+    height: 35px;
+  }
+} 

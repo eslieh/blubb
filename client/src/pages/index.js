@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Blubb - Where vibes meet and magic happens ✨</title>
+        <title>Blubb. - Where vibes meet and magic happens ✨</title>
         <meta name="description" content="Drop into rooms, share your energy, and connect with your people in real time. It's giving main character energy." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -42,7 +42,7 @@ export default function Home() {
             variants={staggerChildren}
           >
             <motion.div className={styles.logoSection} variants={fadeInUp}>
-              <div className={styles.logo}>Blubb</div>
+              <div className={styles.logo}>Blubb.</div>
             </motion.div>
             
             <motion.h1 className={styles.headline} variants={fadeInUp}>
