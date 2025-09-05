@@ -72,9 +72,10 @@ export default function Join() {
   };
 
   const validateRoomId = (roomId) => {
-    // Basic validation - room ID should be alphanumeric and reasonable length
-    return roomId && roomId.length >= 1 && roomId.length <= 50 && /^[a-zA-Z0-9]+$/.test(roomId);
+    // Accept alphanumeric + dashes, 1 to 50 chars
+    return roomId && roomId.length >= 1 && roomId.length <= 50 && /^[a-zA-Z0-9-]+$/.test(roomId);
   };
+
 
   const handleJoinRoom = async (e) => {
     e.preventDefault();
