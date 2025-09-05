@@ -76,41 +76,58 @@ def invalidate_cache(*patterns):
     return decorator
 
 
+import uuid
+from flask import current_app
+
+
 class CacheManager:
     """Centralized cache management for room-related data."""
-    
+
+    @staticmethod
+    def _to_str(value):
+        """Ensure IDs like UUIDs are stored as strings for cache keys."""
+        if isinstance(value, uuid.UUID):
+            return str(value)
+        return str(value)
+
+    # ----------------------------
+    # Keys
+    # ----------------------------
     @staticmethod
     def get_room_participant_count_key(room_id):
-        return f"room:{room_id}:count"
-    
+        return f"room:{CacheManager._to_str(room_id)}:count"
+
+    @staticmethod
+    def get_user_rooms_key(user_id):
+        return f"user:{CacheManager._to_str(user_id)}:rooms"
+
+    @staticmethod
+    def get_room_participants_key(room_id):
+        return f"room:{CacheManager._to_str(room_id)}:participants"
+
+    @staticmethod
+    def get_room_details_key(room_id):
+        return f"room:{CacheManager._to_str(room_id)}:details"
+
+    @staticmethod
+    def get_user_room_membership_key(user_id, room_id):
+        return f"user:{CacheManager._to_str(user_id)}:room:{CacheManager._to_str(room_id)}:member"
+
+    # ----------------------------
+    # Cache Methods
+    # ----------------------------
     @staticmethod
     def cache_room_participant_count(room_id, count, timeout=60):
         """Cache room participant count."""
         key = CacheManager.get_room_participant_count_key(room_id)
         current_app.cache.set(key, count, timeout=timeout)
-    
+
     @staticmethod
     def get_room_participant_count(room_id):
         """Get cached room participant count."""
         key = CacheManager.get_room_participant_count_key(room_id)
         return current_app.cache.get(key)
-    
-    @staticmethod
-    def get_user_rooms_key(user_id):
-        return f"user:{user_id}:rooms"
-    
-    @staticmethod
-    def get_room_participants_key(room_id):
-        return f"room:{room_id}:participants"
-    
-    @staticmethod
-    def get_room_details_key(room_id):
-        return f"room:{room_id}:details"
-    
-    @staticmethod
-    def get_user_room_membership_key(user_id, room_id):
-        return f"user:{user_id}:room:{room_id}:member"
-    
+
     @staticmethod
     def invalidate_room_related_cache(user_id, room_id):
         """Invalidate all caches related to a room and user."""
@@ -121,16 +138,16 @@ class CacheManager:
             CacheManager.get_user_room_membership_key(user_id, room_id),
             CacheManager.get_room_participant_count_key(room_id)
         ]
-        
+
         for key in keys_to_delete:
             current_app.cache.delete(key)
-    
+
     @staticmethod
     def cache_room_membership(user_id, room_id, is_member=True, timeout=300):
         """Cache user's room membership status."""
         key = CacheManager.get_user_room_membership_key(user_id, room_id)
         current_app.cache.set(key, is_member, timeout=timeout)
-    
+
     @staticmethod
     def get_room_membership(user_id, room_id):
         """Get cached room membership status."""
