@@ -6,6 +6,8 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 from flask import Flask
 from flask_restful import Api
 from flask_caching import Cache
+import uuid
+import json
 from flask_jwt_extended import JWTManager
 from flask_dance.contrib.google import make_google_blueprint
 from flask_bcrypt import Bcrypt
@@ -67,6 +69,14 @@ def create_app():
         ],
         redirect_url="/auth/google",
     )
+    
+    class CustomJSONEncoder(json.JSONEncoder):
+        def default(self, obj):
+            if isinstance(obj, uuid.UUID):
+                return str(obj)
+            return super().default(obj)
+        
+    app.json_encoder = CustomJSONEncoder
     app.register_blueprint(google_bp, url_prefix="/login")
 
     # ---- API resources ----
