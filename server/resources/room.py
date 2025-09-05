@@ -162,7 +162,7 @@ class RoomListResource(Resource):
         room_list = []
         for room in rooms:
             room_data = {
-                "id": room.id,
+                "id": str(room.id),
                 "name": room.name,
                 "description": room.description,
                 "created_by": room.created_by,
@@ -213,7 +213,7 @@ class RoomListResource(Resource):
             CacheManager.cache_room_membership(current_user_id, room.id, True)
 
             room_data = {
-                "id": room.id,
+                "id": str(room.id),
                 "name": room.name,
                 "description": room.description,
                 "created_by": room.created_by,
@@ -270,7 +270,7 @@ class RoomParticipantsResource(Resource):
 
         participants = [
             {
-                "id": p.user.id,
+                "id": str(p.user.id),
                 "name": p.user.name,
                 "profile": p.user.profile,
                 "joined_at": p.joined_at.isoformat() if p.joined_at else None,
@@ -417,7 +417,7 @@ class CacheWarmupResource(Resource):
         room_list = []
         for room in rooms:
             room_data = {
-                "id": room.id,
+                "id": str(room.id),
                 "name": room.name,
                 "description": room.description,
                 "created_by": room.created_by,
@@ -485,13 +485,13 @@ class RoomDetailResource(Resource):
         creator = None
         if hasattr(room, 'creator') and room.creator:
             creator = {
-                "id": room.creator.id,
+                "id": str(room.creator.id),
                 "name": room.creator.name,
                 "profile": room.creator.profile,
             }
 
         room_data = {
-            "id": room.id,
+            "id": str(room.id),
             "name": room.name,
             "description": room.description,
             "created_by": room.created_by,
@@ -502,7 +502,7 @@ class RoomDetailResource(Resource):
             "creator": creator,
             "participants": [
                 {
-                    "id": p.user.id,
+                    "id": str(p.user.id),
                     "name": p.user.name,
                     "profile": p.user.profile,
                     "joined_at": p.joined_at.isoformat() if p.joined_at else None,

@@ -21,7 +21,7 @@ class UserInfo(Resource):
             return None
 
         user_info = {
-            "id": user.id,
+            "id": str(user.id),
             "email": user.email,
             "name": user.name,
             "profile": user.profile
