@@ -47,7 +47,7 @@ class Login(Resource):
         user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
             access_token = create_access_token(identity=str(user.id))
-            return {"access_token": access_token, "user": {"id": str(user.id), "email": user.email, 'name': user.name, 'profile': user.profile}}, 200
+            return {"access_token": access_token, "user": {"id": user.id, "email": user.email, 'name': user.name, 'profile': user.profile}}, 200
         else:
             return {"error": "Invalid credentials"}, 401
         
