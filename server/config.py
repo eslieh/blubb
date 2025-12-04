@@ -21,3 +21,4 @@ class Config:
     UPSTASH_REDIS_REST_URL = os.environ.get("UPSTASH_REDIS_REST_URL")
     UPSTASH_REDIS_REST_TOKEN = os.environ.get("UPSTASH_REDIS_REST_TOKEN")
 
+# hello worl
